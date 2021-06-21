@@ -5,10 +5,13 @@ import { AppService } from './app.service';
 import { AdminController } from "./admin.controller";
 import { CatsService } from './cats/cats.service';
 import { TodosModule } from './todos/todos.module'
-import decodeIDToken from './config/authenticateToken'
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-    imports: [TodosModule],
+    imports: [
+        TodosModule,
+        MongooseModule.forRoot('mongodb+srv://db:pass@cluster0.tmpil.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'),
+    ],
     controllers: [AppController, CatsController, AdminController],
     providers: [AppService, CatsService],
 })
