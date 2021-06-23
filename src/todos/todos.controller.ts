@@ -8,23 +8,45 @@ export class TodosController {
     constructor(private todosService: TodosService) {}
     
     @Get()
-    findAll() {
-        return this.todosService.findAll()
+    async findAll() {
+        try {
+            return await this.todosService.findAll()
+        } catch (err) {
+            return err
+        }
     }
+    
     @Get(':id')
-    findOne(@Param() params: { id: number }) {
-        return this.todosService.find(Number(params.id))
+    async findOne(@Param() params: { id: string }) {
+        try {
+            return this.todosService.find(params.id)
+        } catch (err) {
+            return err
+        }
     }
+    
     @Post()
-    create(@Body() createTodoDto: CreateTodoDto & ITodo) {
-        return this.todosService.create(createTodoDto)
+    async create(@Body() createTodoDto: CreateTodoDto & ITodo) {
+        try {
+            return await this.todosService.create(createTodoDto)
+        } catch (err) {
+            return err
+        }
     }
     @Put(':id')
-    complete(@Param() params) {
-        this.todosService.complete(Number(params.id))
+    async complete(@Param() params) {
+        try {
+            return await this.todosService.complete(params.id)
+        } catch (err) {
+            return err
+        }
     }
     @Delete(':id')
-    destroy(@Param() params) {
-        this.todosService.destroy(Number(params.id))
+    async destroy(@Param() params) {
+        try {
+            return await this.todosService.destroy(params.id)
+        } catch (err) {
+            return err
+        }
     }
 }

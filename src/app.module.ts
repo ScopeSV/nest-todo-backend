@@ -1,9 +1,6 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { CatsController } from './cats.controller';
 import { AppService } from './app.service';
-import { AdminController } from "./admin.controller";
-import { CatsService } from './cats/cats.service';
 import { TodosModule } from './todos/todos.module'
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -12,12 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
         TodosModule,
         MongooseModule.forRoot('mongodb+srv://db:pass@cluster0.tmpil.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'),
     ],
-    controllers: [AppController, CatsController, AdminController],
-    providers: [AppService, CatsService],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}
-/*
-export class AppModule implements NestModule {
-
-}
-*/

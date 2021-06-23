@@ -1,5 +1,5 @@
 {
-  "name": "nest-test",
+  "name": "nestjs-todo-backend",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -25,7 +25,6 @@
     "@nestjs/core": "^7.6.15",
     "@nestjs/mongoose": "^7.2.4",
     "@nestjs/platform-express": "^7.6.15",
-    "firebase": "^8.6.8",
     "firebase-admin": "^9.9.0",
     "mongoose": "^5.12.14",
     "reflect-metadata": "^0.1.13",

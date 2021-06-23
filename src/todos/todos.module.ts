@@ -11,7 +11,6 @@ import { MongooseModule } from '@nestjs/mongoose'
     controllers: [TodosController],
     providers: [TodosService],
 })
-// export class TodosModule {}
 export class TodosModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         consumer

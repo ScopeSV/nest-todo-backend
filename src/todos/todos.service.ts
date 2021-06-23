@@ -1,41 +1,78 @@
-import { Injectable } from '@nestjs/common';
-import { ITodo } from '../interfaces/todos.interface'
+import { Inject, Injectable, Scope } from '@nestjs/common';
+import { IRequestWithUser, RequestTodo, RequestTodos } from '../interfaces/todos.interface'
 import { InjectModel } from '@nestjs/mongoose'
 import { Todo, TodoDocument } from './schemas/todo.schema'
 import { Model } from 'mongoose'
-import { CreateCatDto } from '../create-cat.dto'
 import { CreateTodoDto } from './dtos/createTodo.dto'
+import { REQUEST } from '@nestjs/core'
 
-@Injectable()
+
+@Injectable({ scope: Scope.REQUEST})
 export class TodosService {
-    constructor(@InjectModel(Todo.name) private todoModel: Model<TodoDocument>) {}
-    private idInc = 0
-    private todos: ITodo[] = []
+    private userId = this.request.user.uid
+    constructor(
+        @InjectModel(Todo.name) private todoModel: Model<TodoDocument>, 
+        @Inject(REQUEST) private readonly request: IRequestWithUser) {}
     
-    
-    create(createTodoDto: CreateTodoDto) {
-        const createdTodo = new this.todoModel(createTodoDto)
-        return createdTodo.save()
+    async create(createTodoDto: CreateTodoDto): RequestTodo {
+        try {
+            const createdTodo = new this.todoModel({
+                ...createTodoDto,
+                belongsTo: this.userId,
+                completed: false
+            })
+
+            return await createdTodo.save()
+        } catch (err) {
+            return err
+        }
     }
     
-    findAll() {
-        return this.todos
+    async findAll(): RequestTodos {
+        try {
+            return await this.todoModel.find(
+                { belongsTo: this.userId}
+            )
+        } catch (err) {
+            return err
+        }
     }
     
-    find(id: number) {
-        return this.todos.find((todo) => todo.id === id)
+    async find(id: string): RequestTodo {
+        try {
+            return await this.todoModel.findOne(
+                { _id: id, belongsTo: this.userId }
+            )
+        } catch (err) {
+            return err
+        }
     }
     
-    complete(id: number) {
-        this.todos.map((storedTodo) => {
-            if (storedTodo.id === id) {
-                storedTodo.completed = !storedTodo.completed
+    async complete(id: string): RequestTodo {
+        try {
+            const todo = await this.find(id)
+            const completedTodo = {
+                ...todo.toObject(),
+                completed: !todo.completed
             }
-            return storedTodo
-        })
+            
+            return await this.todoModel.findOneAndUpdate(
+                { _id: id, belongsTo: this.userId},
+                completedTodo,
+                {new: true }
+            )
+        } catch (err) {
+            return err
+        }
     }
     
-    destroy(id: number) {
-        return this.todos = this.todos.filter((todo) => id !== todo.id)
+    async destroy(id: string) {
+        try {
+            return await this.todoModel.findOneAndDelete(
+                { _id: id, belongsTo: this.userId }
+            )
+        } catch (err) {
+            return err
+        }
     }
 }
